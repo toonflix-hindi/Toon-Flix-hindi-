@@ -1,0 +1,260 @@
+/* ===== RESET & BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #0d1b2a 100%);
+    color: white;
+    min-height: 100vh;
+}
+
+/* ===== HEADER ===== */
+header {
+    text-align: center;
+    padding: 40px 20px 30px;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+}
+
+header h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #00d4ff, #7b2ffc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 2px;
+}
+
+header p {
+    color: #8899bb;
+    font-size: 1.1rem;
+    margin-top: 8px;
+    letter-spacing: 1px;
+}
+
+.admin-link {
+    display: inline-block;
+    margin-top: 12px;
+    color: #445566;
+    font-size: 0.85rem;
+    text-decoration: none;
+    border: 1px solid #333;
+    padding: 5px 15px;
+    border-radius: 20px;
+    transition: 0.3s;
+}
+
+.admin-link:hover {
+    border-color: #00d4ff;
+    color: #00d4ff;
+}
+
+/* ===== MAIN GRID ===== */
+main {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.anime-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 25px;
+}
+
+/* ===== GLASS CARDS ===== */
+.anime-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.anime-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 15px 50px rgba(0, 212, 255, 0.2);
+    border-color: rgba(0, 212, 255, 0.3);
+}
+
+.anime-card img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-bottom: 2px solid rgba(0, 212, 255, 0.2);
+    transition: transform 0.5s ease;
+}
+
+.anime-card:hover img {
+    transform: scale(1.05);
+}
+
+.anime-card .card-content {
+    padding: 15px;
+}
+
+.anime-card h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #eef5ff;
+}
+
+/* ===== BADGES ===== */
+.status {
+    display: inline-block;
+    padding: 3px 14px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-ongoing {
+    background: rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+    border: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.status-completed {
+    background: rgba(123, 47, 252, 0.2);
+    color: #7b2ffc;
+    border: 1px solid rgba(123, 47, 252, 0.3);
+}
+
+/* ===== TELEGRAM BUTTON ===== */
+.telegram-btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #00d4ff, #7b2ffc);
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+    width: 100%;
+    text-align: center;
+}
+
+.telegram-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 25px rgba(0, 212, 255, 0.5);
+}
+
+/* ===== MODAL ===== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: rgba(20, 25, 50, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 30px;
+    border-radius: 25px;
+    max-width: 450px;
+    width: 90%;
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    color: #8899bb;
+    font-size: 28px;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.modal-close:hover {
+    color: #00d4ff;
+}
+
+.modal img {
+    width: 100%;
+    max-height: 350px;
+    object-fit: cover;
+    border-radius: 15px;
+    border: 1px solid rgba(0, 212, 255, 0.1);
+}
+
+.modal h2 {
+    margin: 15px 0 10px;
+    color: #eef5ff;
+}
+
+.modal .telegram-btn {
+    width: auto;
+    padding: 12px 35px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #445566;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 30px;
+    font-size: 0.85rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+    .anime-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 20px;
+    }
+    .anime-card img {
+        height: 220px;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.6rem;
+    }
+    .anime-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+    .anime-card img {
+        height: 180px;
+    }
+    .anime-card h3 {
+        font-size: 0.9rem;
+    }
+    .telegram-btn {
+        font-size: 0.75rem;
+        padding: 8px 12px;
+    }
+}
