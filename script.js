@@ -1,42 +1,42 @@
-// ===== DATA =====
+// script.js
+import { db, collection, getDocs } from './firebase-config.js';
+
 let animeList = [];
 
-// ===== LOAD DATA =====
-function loadAnime() {
-    const stored = localStorage.getItem('animeData');
-    if (stored) {
-        animeList = JSON.parse(stored);
-    } else {
-        // Default sample data
-        animeList = [
-            {
-                id: 1,
-                title: "Naruto Shippuden",
-                poster: "https://via.placeholder.com/400x600/1a1a3e/00d4ff?text=Naruto",
-                status: "ongoing",
-                telegram: "https://t.me/YourBot?start=naruto"
-            },
-            {
-                id: 2,
-                title: "Attack on Titan",
-                poster: "https://via.placeholder.com/400x600/1a1a3e/7b2ffc?text=AOT",
-                status: "completed",
-                telegram: "https://t.me/YourBot?start=aot"
-            },
-            {
-                id: 3,
-                title: "Demon Slayer",
-                poster: "https://via.placeholder.com/400x600/1a1a3e/ff6b6b?text=DS",
-                status: "ongoing",
-                telegram: "https://t.me/YourBot?start=demon"
-            }
-        ];
-        localStorage.setItem('animeData', JSON.stringify(animeList));
+async function loadAnime() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "anime"));
+        animeList = [];
+        querySnapshot.forEach((doc) => {
+            animeList.push({ id: doc.id, ...doc.data() });
+        });
+        displayAnime();
+    } catch (error) {
+        console.error("Error loading data:", error);
+        animeList = defaultAnime();
+        displayAnime();
     }
-    displayAnime();
 }
 
-// ===== DISPLAY ANIME =====
+function defaultAnime() {
+    return [
+        {
+            id: "1",
+            title: "Naruto Shippuden",
+            poster: "https://via.placeholder.com/400x600/1a1a3e/00d4ff?text=Naruto",
+            status: "ongoing",
+            telegram: "https://t.me/YourBot?start=naruto"
+        },
+        {
+            id: "2",
+            title: "Attack on Titan",
+            poster: "https://via.placeholder.com/400x600/1a1a3e/7b2ffc?text=AOT",
+            status: "completed",
+            telegram: "https://t.me/YourBot?start=aot"
+        }
+    ];
+}
+
 function displayAnime() {
     const grid = document.getElementById('animeGrid');
     if (!grid) return;
@@ -50,7 +50,7 @@ function displayAnime() {
     }
 
     grid.innerHTML = animeList.map(anime => `
-        <div class="anime-card" onclick="showDetails(${anime.id})">
+        <div class="anime-card" onclick="showDetails('${anime.id}')">
             <img src="${anime.poster}" alt="${anime.title}" 
                  onerror="this.src='https://via.placeholder.com/400x600/1a1a3e/445566?text=No+Image'">
             <div class="card-content">
@@ -65,12 +65,10 @@ function displayAnime() {
     `).join('');
 }
 
-// ===== OPEN TELEGRAM =====
 function openTelegram(link) {
     window.open(link, '_blank');
 }
 
-// ===== SHOW DETAILS (MODAL) =====
 function showDetails(id) {
     const anime = animeList.find(a => a.id === id);
     if (!anime) return;
@@ -123,11 +121,9 @@ function closeModal() {
     if (modal) modal.style.display = 'none';
 }
 
-// ===== CLOSE MODAL ON OUTSIDE CLICK =====
 document.addEventListener('click', function(e) {
     const modal = document.getElementById('detailModal');
     if (modal && e.target === modal) closeModal();
 });
 
-// ===== INIT =====
-document.addEventListener('DOMContentLoaded', loadAnime);
+document.addEventListener('DOMContentLoaded', loadAnime);document.addEventListener('DOMContentLoaded', loadAnime);
