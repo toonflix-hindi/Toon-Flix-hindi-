@@ -1,45 +1,23 @@
-// ===== CONFIG =====
-const ADMIN_PASSWORD = "toonflix2024"; // 🔑 Change karo
+// admin.js
+import { db, collection, addDoc, getDocs, deleteDoc, doc } from './firebase-config.js';
 
-// ===== DATA =====
 let animeList = [];
-let nextId = 1;
 
-// ===== LOAD DATA =====
-function loadAnimeData() {
-    const stored = localStorage.getItem('animeData');
-    if (stored) {
-        animeList = JSON.parse(stored);
-        if (animeList.length > 0) {
-            nextId = Math.max(...animeList.map(a => a.id)) + 1;
-        }
-    } else {
+async function loadAnimeData() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "anime"));
         animeList = [];
-        nextId = 1;
-    }
-}
-
-// ===== SAVE DATA =====
-function saveAnimeData() {
-    localStorage.setItem('animeData', JSON.stringify(animeList));
-}
-
-// ===== VERIFY ADMIN =====
-function verifyAdmin() {
-    const pass = document.getElementById('adminPass').value;
-    if (pass === ADMIN_PASSWORD) {
-        localStorage.setItem('adminLoggedIn', 'true');
-        document.getElementById('loginSection').style.display = 'none';
-        document.getElementById('adminContent').classList.add('active');
-        loadAnimeData();
+        querySnapshot.forEach((doc) => {
+            animeList.push({ id: doc.id, ...doc.data() });
+        });
         displayAdminList();
-    } else {
-        alert('❌ Wrong Password!');
+    } catch (error) {
+        console.error("Error loading data:", error);
+        alert('❌ Error loading data from Firebase');
     }
 }
 
-// ===== ADD ANIME =====
-function addAnime() {
+async function addAnime() {
     const title = document.getElementById('animeTitle').value.trim();
     const poster = document.getElementById('animePoster').value.trim();
     const status = document.getElementById('animeStatus').value;
@@ -50,31 +28,35 @@ function addAnime() {
         return;
     }
 
-    const newAnime = {
-        id: nextId++,
-        title: title,
-        poster: poster,
-        status: status,
-        telegram: telegram
-    };
-
-    animeList.push(newAnime);
-    saveAnimeData();
-    displayAdminList();
-    clearForm();
-    alert('✅ Anime added successfully!');
-}
-
-// ===== DELETE ANIME =====
-function deleteAnime(id) {
-    if (confirm('Delete this anime?')) {
-        animeList = animeList.filter(a => a.id !== id);
-        saveAnimeData();
-        displayAdminList();
+    try {
+        await addDoc(collection(db, "anime"), {
+            title: title,
+            poster: poster,
+            status: status,
+            telegram: telegram
+        });
+        alert('✅ Anime added successfully!');
+        clearForm();
+        loadAnimeData();
+    } catch (error) {
+        console.error("Error adding document: ", error);
+        alert('❌ Error adding anime. Please try again.');
     }
 }
 
-// ===== DISPLAY ADMIN LIST =====
+async function deleteAnime(id) {
+    if (confirm('Delete this anime?')) {
+        try {
+            await deleteDoc(doc(db, "anime", id));
+            alert('🗑️ Anime deleted!');
+            loadAnimeData();
+        } catch (error) {
+            console.error("Error deleting document: ", error);
+            alert('❌ Error deleting anime. Please try again.');
+        }
+    }
+}
+
 function displayAdminList() {
     const container = document.getElementById('animeList');
     if (!container) return;
@@ -92,19 +74,31 @@ function displayAdminList() {
                 <br>
                 <small style="color:#445566;">${anime.telegram}</small>
             </div>
-            <button class="btn-delete" onclick="deleteAnime(${anime.id})">🗑️ Delete</button>
+            <button class="btn-delete" onclick="deleteAnime('${anime.id}')">🗑️ Delete</button>
         </div>
     `).join('');
 }
 
-// ===== CLEAR FORM =====
 function clearForm() {
     document.getElementById('animeTitle').value = '';
     document.getElementById('animePoster').value = '';
     document.getElementById('animeTelegram').value = '';
 }
 
-// ===== LOGOUT =====
+const ADMIN_PASSWORD = "admin123";
+
+function verifyAdmin() {
+    const pass = document.getElementById('adminPass').value;
+    if (pass === ADMIN_PASSWORD) {
+        localStorage.setItem('adminLoggedIn', 'true');
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('adminContent').classList.add('active');
+        loadAnimeData();
+    } else {
+        alert('❌ Wrong Password!');
+    }
+}
+
 function logout() {
     localStorage.removeItem('adminLoggedIn');
     if (confirm('Logout?')) {
@@ -114,12 +108,16 @@ function logout() {
     }
 }
 
-// ===== AUTO-LOGIN CHECK =====
 document.addEventListener('DOMContentLoaded', function() {
     if (localStorage.getItem('adminLoggedIn') === 'true') {
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('adminContent').classList.add('active');
         loadAnimeData();
-        displayAdminList();
     }
 });
+
+// Make functions globally accessible
+window.addAnime = addAnime;
+window.deleteAnime = deleteAnime;
+window.verifyAdmin = verifyAdmin;
+window.logout = logout;
